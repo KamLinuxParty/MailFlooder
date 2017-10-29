@@ -1,0 +1,144 @@
+﻿<Window x:Class="MailFlooder.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MailFlooder"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525" FontFamily="Segoe UI Light">
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" Executed="Open_Executed" />
+        <!--//<CommandBinding Command="local:CoreCommands.Send"
+        //                Executed="CommandBinding_Executed"></CommandBinding>
+        //<CommandBinding Command="local:CoreCommands.Send" CanExecute="CanSend_Executed"/>-->
+        <CommandBinding Command="local:CoreCommands.Send" Executed="Send_Executed" CanExecute="CanSend_Executed"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <DockPanel Margin="25,0" >
+            <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button x:Name="Send" Content="Запуск" Command="local:CoreCommands.Send" VerticalAlignment="Center" Margin="5,0"/>
+                <Button Content="Загрузить из файла" Command="Open"  VerticalAlignment="Center" Margin="5,0" />
+                <Button Content="Превью" Click="ShowPeview"  VerticalAlignment="Center" Margin="5,0" />
+            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Name="bodyDelim" MinWidth="50" />
+                    <ColumnDefinition Name="preDelim" Width="auto" />
+                </Grid.ColumnDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBox x:Name="body" Text="Тескт сообщения... Потдерживает html форматирование!!!" TextWrapping="WrapWithOverflow" TextChanged="body_TextChanged" AcceptsReturn="True" AcceptsTab="True"/>
+                </ScrollViewer>
+                <WebBrowser Name="preview" Grid.Column="1" Visibility="Collapsed" />
+                <GridSplitter x:Name="preSlider" Width="2" ShowsPreview="True" ResizeDirection="Columns" ResizeBehavior="CurrentAndNext"  />
+            </Grid>
+        </DockPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Panel.ZIndex="64536">
+            <StackPanel.Background>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.InactiveCaptionTextColorKey}}"/>
+            </StackPanel.Background>
+            <Expander ExpandDirection="Right"   >
+
+                <DockPanel  >
+                    <DockPanel.Background>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                    </DockPanel.Background>
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="Target" Text="Адресс получателя" />
+                        <Button Content="+" Click="AddTarget" Grid.Column="1"/>
+                        <Button Content="O" Command="Open" ToolTip="Загрузить из файла спиоск получателей" Grid.Column="2"/>
+                    </Grid>
+                    <ScrollViewer>
+                        <WrapPanel x:Name="Targets" />
+                    </ScrollViewer>
+                </DockPanel>
+            </Expander>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <StackPanel.Background>
+                <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.InactiveCaptionTextColorKey}}"/>
+            </StackPanel.Background>
+            <Expander ExpandDirection="Left" HorizontalAlignment="Left" >
+                <DockPanel>
+                    <DockPanel.Background>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                    </DockPanel.Background>
+                    <StackPanel  DockPanel.Dock="Top">
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="ФИО" Background="{x:Null}" Foreground="Black" />
+                            <Label Content="Тема" Grid.Column="1" Background="{x:Null}" Foreground="Black" />
+                            <TextBox x:Name="name" Grid.Row="1"  />
+                            <TextBox x:Name="subject" Grid.Row="1" Grid.Column="1" />
+                        </Grid>
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Сервер" Background="{x:Null}" Foreground="Black" />
+                            <Label Content="Порт" Grid.Column="1" Background="{x:Null}" Foreground="Black" />
+                            <TextBox x:Name="host" Grid.Row="1" />
+                            <TextBox x:Name="port" Grid.Row="1" Grid.Column="1" />
+                        </Grid>
+
+                        <Grid >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Отправитель" Background="{x:Null}" Foreground="Black" />
+                            <Label Content="Пароль" ToolTip="От почты отправителя" Grid.Column="1" Background="{x:Null}" Foreground="Black" />
+                            <TextBox x:Name="from" ToolTip="Адресс или логин, в зависимости от вашего почтового сервиса" Grid.Row="1" Text="exapmle@gmail.com" />
+                            <PasswordBox x:Name="password" Grid.Row="1" Grid.Column="1" />
+                        </Grid>
+
+                    </StackPanel>
+
+                    <StackPanel DockPanel.Dock="Top">
+                        <Button x:Name="Test" Content="Проверить" Command="local:CoreCommands.Send" HorizontalContentAlignment="Left" >
+                            <Button.CommandBindings >
+                                <CommandBinding Command="local:CoreCommands.Send" Executed="TrySend_Executed"/>
+                            </Button.CommandBindings>
+                        </Button>
+
+
+                    </StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Button x:Name="Attach" Content="Прикрепить файл(-ы)"  Click="AddAttachments" HorizontalContentAlignment="Left" />
+
+                        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto">
+                            <WrapPanel x:Name="Attachments" />
+                        </ScrollViewer>
+                    </Grid>
+                </DockPanel>
+            </Expander>
+        </StackPanel>
+    </Grid>
+</Window>
